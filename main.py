@@ -37,3 +37,30 @@ def get_users():
         return {"status": "success", "data": result}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+
+# 定義前端送來的資料格式
+class AccountInfo(BaseModel):
+    id: str
+    password: str
+
+@app.post("/check_account")
+def check_if_exist_account(data: AccountInfo):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = "SELECT account, password FROM userdata WHERE account = %s AND password = %s"
+        cursor.execute(sql, (data.id, data.password))
+        result = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if result:
+            return {"exist": True}
+        else:
+            return {"exist": False}
+
+    except Exception as e:
+        return {"error": str(e)}

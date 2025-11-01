@@ -8,7 +8,7 @@ app = FastAPI()
 # --- 允許 Android 或瀏覽器存取 ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 建議部署後改成你的App網域
+    allow_origins=["*"],  # 建議部署後須更改
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -62,6 +62,27 @@ def check_if_exist_account(data: AccountInfo):
             return {"exist": True}
         else:
             return {"exist": False}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/get_user_name")
+def check_if_exist_account(id: str):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = "SELECT user_name FROM `userdata` WHERE account = '%s'";
+        cursor.execute(sql, (id,))
+        result = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if result:
+            return {"user_name": result[0]}
+        else:
+            return {"user_name": None, "found": False}
 
     except Exception as e:
         return {"error": str(e)}

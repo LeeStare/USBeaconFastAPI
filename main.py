@@ -72,17 +72,50 @@ def check_if_exist_account(id: str):
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        sql = "SELECT user_name FROM `userdata` WHERE account = '%s'";
-        cursor.execute(sql, (id,))
+        sql = "SELECT account, password FROM userdata WHERE account = %s AND password = %s"
+        cursor.execute(sql, (data.id, data.password))
         result = cursor.fetchone()
 
         cursor.close()
         conn.close()
 
         if result:
-            return {"user_name": result[0]}
+            return {"exist": True}
         else:
-            return {"user_name": None, "found": False}
+            return {"exist": False}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/get_class_name")
+def check_if_exist_account(id: str):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = "SELECT className,flag FROM `class` WHERE flag = '1'";
+        cursor.execute(sql)
+        result = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        # 沒找到結果
+        if not result:
+            return {"found": False, "classes": []}
+        
+        # 格式化成JSON
+        class_list = []
+        for row in results:
+            class_list.append({
+                "className": row[0],
+                "flag": row[1]
+            })
+            
+        return {
+            "found": True,
+            "classes": class_list
+        }
 
     except Exception as e:
         return {"error": str(e)}

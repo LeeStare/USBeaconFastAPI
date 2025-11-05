@@ -100,22 +100,10 @@ def check_if_exist_account(id: str):
         cursor.close()
         conn.close()
 
-        # 沒找到結果
-        if not result:
-            return {"found": False, "classes": []}
-        
-        # 格式化成JSON
-        class_list = []
-        for row in results:
-            class_list.append({
-                "className": row[0],
-                "flag": row[1]
-            })
-            
-        return {
-            "found": True,
-            "classes": class_list
-        }
+        if result:
+            return {"exist": True}
+        else:
+            return {"exist": False}
 
     except Exception as e:
         return {"error": str(e)}

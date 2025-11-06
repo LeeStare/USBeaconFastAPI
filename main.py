@@ -16,10 +16,10 @@ app.add_middleware(
 
 # --- MySQL 連線設定 ---
 db_config = {
-    "host": "sql12.freesqldatabase.com",
-    "user": "sql12804805",
-    "password": "8WkBTMX1nD",
-    "database": "sql12804805",
+    "host": "tpbyud.h.filess.io",
+    "user": "USBeaconDataBase_fieldtent",
+    "password": "6c4168e2d77d343677613c3b67dea32a211ecad7",
+    "database": "USBeaconDataBase_fieldtent",
 }
 
 @app.get("/")

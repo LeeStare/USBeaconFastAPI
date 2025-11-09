@@ -155,6 +155,10 @@ def create_user(data: createRequest):
     except Exception as e:
         return {"success": False, "error": str(e)}
     
+
+class FlagRequest(BaseModel):
+    user: str
+
 @app.post("/user/setFlagZero")
 def set_flag_zero(data: FlagRequest):
     try:

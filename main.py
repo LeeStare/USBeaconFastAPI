@@ -154,3 +154,23 @@ def create_user(data: createRequest):
         return {"success": True, "message": "使用者註冊成功"}
     except Exception as e:
         return {"success": False, "error": str(e)}
+    
+@app.post("/user/setFlagZero")
+def set_flag_zero(data: FlagRequest):
+    try:
+        if data.user != "410777000":
+            return {"success": False, "message": "沒有權限執行"}
+        
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = "UPDATE class SET flag = '0'"
+        cursor.execute(sql)
+        cursor.commit()
+
+        cursor.close()
+        conn.close()
+
+        return {"success": True, "message": "所有課程 flag 已設為0"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}

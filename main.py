@@ -46,7 +46,7 @@ class AccountInfo(BaseModel):
     password: str
 
 @app.post("/check_account_password")
-def check_if_exist_account(data: AccountInfo):
+def check_account_password(data: AccountInfo):
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
@@ -109,7 +109,7 @@ def get_user_name(account: str):
         return {"error": str(e)}
 
 @app.get("/get_class_name")
-def check_if_exist_account():
+def get_class_name():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()

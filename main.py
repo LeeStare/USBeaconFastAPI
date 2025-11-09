@@ -128,3 +128,29 @@ def get_class_name():
 
     except Exception as e:
         return {"error": str(e)}
+    
+class createRequest(BaseModel):
+    account: str
+    password:str
+    user_name: str
+    phone_number: str
+
+@app.post("/create_user")
+def create_user(data: createRequest):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = """
+        INSERT INTO userdata (account, password, user_name, phone_number)
+        VALUES (%s, %s, %s, %s)
+        """
+
+        cursor.execute(sql, (data.account, data.password, data.user_name, data.phone_number))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        return {"success": True, "message": "使用者註冊成功"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}

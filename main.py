@@ -42,17 +42,38 @@ def get_users():
 
 # 定義前端送來的資料格式
 class AccountInfo(BaseModel):
-    id: str
+    account: str
     password: str
 
-@app.post("/check_account")
+@app.post("/check_account_password")
 def check_if_exist_account(data: AccountInfo):
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
         sql = "SELECT account, password FROM userdata WHERE account = %s AND password = %s"
-        cursor.execute(sql, (data.id, data.password))
+        cursor.execute(sql, (data.account, data.password))
+        result = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if result:
+            return {"exist": True}
+        else:
+            return {"exist": False}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/check_account_exist")
+def check_account_exist(account: str):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        sql = "SELECT account FROM `userdata` WHERE account = '%s'"
+        cursor.execute(sql, account)
         result = cursor.fetchone()
 
         cursor.close()
@@ -67,13 +88,13 @@ def check_if_exist_account(data: AccountInfo):
         return {"error": str(e)}
 
 @app.get("/get_user_name")
-def check_if_exist_account(id: str):
+def get_user_name(account: str):
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        sql = "SELECT account, password FROM userdata WHERE account = %s AND password = %s"
-        cursor.execute(sql, (data.id, data.password))
+        sql = "SELECT user_name FROM `userdata` WHERE account = '%s'"
+        cursor.execute(sql, account)
         result = cursor.fetchone()
 
         cursor.close()
@@ -88,7 +109,7 @@ def check_if_exist_account(id: str):
         return {"error": str(e)}
 
 @app.get("/get_class_name")
-def check_if_exist_account(id: str):
+def check_if_exist_account():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()

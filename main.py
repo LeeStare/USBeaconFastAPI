@@ -159,7 +159,7 @@ def create_user(data: createRequest):
 class FlagRequest(BaseModel):
     user: str
 
-@app.post("/user/setFlagZero")
+@app.post("/class/setFlagZero")
 def set_flag_zero(data: FlagRequest):
     try:
         if data.user != "410777000":
@@ -178,3 +178,19 @@ def set_flag_zero(data: FlagRequest):
         return {"success": True, "message": "所有課程 flag 已設為0"}
     except Exception as e:
         return {"success": False, "error": str(e)}
+    
+@app.get("/get_all_class_name")
+def get_all_class_name():
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute("SELECT className FROM class")
+        result = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        class_list = [r[0] for r in result]
+        return {"class_names": class_list}
+    except Exception as e:
+        return {"error": str(e)}

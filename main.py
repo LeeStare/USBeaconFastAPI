@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import mysql.connector
+from mysql.connector import Error
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -194,3 +195,46 @@ def get_all_class_name():
         return {"class_names": class_list}
     except Exception as e:
         return {"error": str(e)}
+    
+class ClassData(BaseModel):
+    className: str
+    classroom: str
+    day: str
+    time: str
+    quantity: int
+    flag: int
+
+@app.post("/class_create")
+def class_create(data: ClassData):
+    try:
+        # 連線資料庫
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # 使用 parameterized query 避免 SQL injection
+        sql = """
+            INSERT INTO class (className, classroom, day, time, quantity, flag)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        cursor.execute(sql, (data.className, data.classroom, data.day, data.time, data.quantity, data.flag))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return {
+            "success": True,
+            "message": f"課程 {data.className} 已成功新增"
+        }
+
+    except Error as e:
+        return {
+            "success": False,
+            "message": f"資料庫錯誤: {str(e)}"
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"其他錯誤: {str(e)}"
+        }
